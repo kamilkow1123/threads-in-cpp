@@ -21,7 +21,7 @@ public:
     int getY();
     void setY(int coordinate);
     int getSpeed();
-    const char *getName();
+    const char *getSymbol();
     int getNumberOfBounces();
     void incrementNumberOfBounces();
     void bounceX();
