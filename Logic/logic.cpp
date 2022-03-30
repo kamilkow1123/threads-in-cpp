@@ -110,7 +110,7 @@ void printBoard(WINDOW *win, Rectangle *rectangle)
         wattron(win, A_STANDOUT);
         for (int i = 0; i < rectangle->getLength(); i++)
             for (int j = 0; j < rectangle->getHeight(); j++)
-                mvwprintw(win, rectangle->getUpPosition() + i, 50 + j, " ");
+                mvwprintw(win, rectangle->getUpPosition() + i, j + RECTANGLE_OFFSET, " ");
 
         wattroff(win, A_STANDOUT);
         wrefresh(win);
