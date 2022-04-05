@@ -101,12 +101,12 @@ void printBoard(WINDOW *win, Rectangle *rectangle)
     }
 }
 
-void endProgram()
+void endProgram(WINDOW *win)
 {
     char key;
     do
     {
-        key = getch();
+        key = wgetch(win);
     } while (key != 'q');
     shouldEnd = true;
 }
@@ -125,7 +125,7 @@ void run()
 
     Rectangle rectangle = Rectangle(10, 10);
 
-    thread endProgramThread(endProgram);
+    thread endProgramThread(endProgram, win);
     thread printBoardThread(printBoard, win, &rectangle);
     thread moveRectangleThread(moveRectangle, &rectangle);
     list<thread> threadList;
