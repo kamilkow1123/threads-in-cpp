@@ -24,26 +24,34 @@ Circle::Circle(const char *symbol, int speed, int direction)
 
 Circle::~Circle() {}
 
+const char *Circle::getSymbol() { return this->symbol; }
+
 int Circle::getX() { return this->x; }
 
+void Circle::setX(int coordinate) { this->x = coordinate; }
+
 int Circle::getY() { return this->y; }
+
+void Circle::setY(int coordinate) { this->y = coordinate; }
 
 int Circle::getSpeed() { return this->speed; }
 
 int Circle::getNumberOfBounces() { return this->numberOfBounces; }
 
+void Circle::incrementNumberOfBounces() { this->numberOfBounces++; }
+
 int Circle::getDeltaX() { return this->deltaX; }
+
+void Circle::bounceX()
+{
+    this->deltaX *= -1;
+    this->incrementNumberOfBounces();
+}
 
 int Circle::getDeltaY() { return this->deltaY; }
 
-const char *Circle::getSymbol() { return this->symbol; }
-
-void Circle::setX(int coordinate) { this->x = coordinate; }
-
-void Circle::setY(int coordinate) { this->y = coordinate; }
-
-void Circle::incrementNumberOfBounces() { this->numberOfBounces++; }
-
-void Circle::bounceX() { this->deltaX *= -1; }
-
-void Circle::bounceY() { this->deltaY *= -1; }
+void Circle::bounceY()
+{
+    this->deltaY *= -1;
+    this->incrementNumberOfBounces();
+}

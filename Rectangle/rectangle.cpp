@@ -3,12 +3,12 @@
 
 using namespace std;
 
-Rectangle::Rectangle(int length, int height)
+Rectangle::Rectangle(int width, int height)
 {
-    this->length = length;
+    this->width = width;
     this->height = height;
     this->drawSpeed();
-    this->leftUpCorner = 5;
+    this->topLeftCorner = 10;
     this->isDirectionUp = true;
 }
 
@@ -22,26 +22,26 @@ bool Rectangle::getIsDirectionUp()
     return isDirectionUp;
 }
 
-int Rectangle::getDownPosition()
+int Rectangle::getBottomEdge()
 {
-    return this->leftUpCorner + this->height;
+    return this->topLeftCorner + this->height;
 }
 
-int Rectangle::getUpPosition()
+int Rectangle::getTopEdge()
 {
-    return this->leftUpCorner;
+    return this->topLeftCorner;
 }
 
-void Rectangle::setUpPosition(int position)
+void Rectangle::setTopEdge(int position)
 {
-    this->leftUpCorner = position;
+    this->topLeftCorner = position;
 }
 
 void Rectangle::drawSpeed()
 {
     random_device rd;
     mt19937 gen(rd());
-    uniform_int_distribution<> RectangleSpeed(100000, 1000000);
+    uniform_int_distribution<> RectangleSpeed(100, 1000);
     this->speed = RectangleSpeed(gen);
 }
 
@@ -50,12 +50,18 @@ int Rectangle::getSpeed()
     return this->speed;
 }
 
-int Rectangle::getLength()
+int Rectangle::getWidth()
 {
-    return this->length;
+    return this->width;
 }
 
 int Rectangle::getHeight()
 {
     return this->height;
+}
+
+void Rectangle::bounce()
+{
+    this->changeDirection();
+    this->drawSpeed();
 }

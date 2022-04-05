@@ -7,7 +7,5 @@ int main(int argc, char **argv)
 {
     run();
 
-    getch();
-
     return 0;
 }

@@ -1,21 +1,22 @@
 class Rectangle
 {
 private:
-    int leftUpCorner;
+    int topLeftCorner;
     bool isDirectionUp;
-    int length;
+    int width;
     int height;
     int speed;
 
 public:
-    Rectangle(int length, int height);
+    Rectangle(int width, int height);
     void drawSpeed();
-    int getUpPosition();
-    void setUpPosition(int position);
-    int getDownPosition();
+    int getTopEdge();
+    void setTopEdge(int position);
+    int getBottomEdge();
     bool getIsDirectionUp();
     void changeDirection();
     int getSpeed();
-    int getLength();
+    int getWidth();
     int getHeight();
+    void bounce();
 };
