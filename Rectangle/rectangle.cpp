@@ -87,6 +87,16 @@ void Rectangle::moveRectangle()
         if (shouldEnd)
             break;
 
+        {
+            unique_lock<mutex> lk(m);
+            if (this->isSleeping)
+            {
+                cv.wait(lk);
+                this->isSleeping = false;
+                continue;
+            }
+        }
+
         if (this->getTopEdge() == 1 || this->getBottomEdge() == BOARD_WIDTH - 1)
             this->bounce();
 
@@ -95,15 +105,6 @@ void Rectangle::moveRectangle()
             this->setTopEdge(--topEdge);
         else
             this->setTopEdge(++topEdge);
-
-        {
-            unique_lock<mutex> lk(m);
-            if (this->isSleeping)
-            {
-                cv.wait(lk);
-                this->isSleeping = false;
-            }
-        }
 
         int sleepTime = this->getSpeed();
         this_thread::sleep_for(chrono::milliseconds(sleepTime));

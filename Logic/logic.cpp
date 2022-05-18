@@ -41,8 +41,8 @@ void moveCircle(Circle *circle, Rectangle *rectangle)
                 rectangle->getWidth(),
                 rectangle->getHeight()))
         {
-            circle->setNumberOfBounces(100);
             rectangle->negateIsSleeping();
+            circle->setNumberOfBounces(100);
         }
 
         int sleepTime = circle->getSpeed();
