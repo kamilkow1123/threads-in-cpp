@@ -3,6 +3,16 @@
 
 using namespace std;
 
+Rectangle::Rectangle(const Rectangle &rec)
+{
+    this->topLeftCorner = rec.topLeftCorner;
+    this->isDirectionUp = rec.isDirectionUp;
+    this->width = rec.width;
+    this->height = rec.height;
+    this->speed = rec.speed;
+    this->isSleeping = rec.isSleeping;
+}
+
 Rectangle::Rectangle(int width, int height)
 {
     this->width = width;
@@ -10,6 +20,7 @@ Rectangle::Rectangle(int width, int height)
     this->drawSpeed();
     this->topLeftCorner = 10;
     this->isDirectionUp = true;
+    this->isSleeping = false;
 }
 
 void Rectangle::changeDirection()
@@ -64,4 +75,56 @@ void Rectangle::bounce()
 {
     this->changeDirection();
     this->drawSpeed();
+}
+
+void Rectangle::moveRectangle()
+{
+    static mutex m;
+    int topEdge;
+
+    for (;;)
+    {
+        if (shouldEnd)
+            break;
+
+        if (this->getTopEdge() == 1 || this->getBottomEdge() == BOARD_WIDTH - 1)
+            this->bounce();
+
+        topEdge = this->getTopEdge();
+        if (this->getIsDirectionUp())
+            this->setTopEdge(--topEdge);
+        else
+            this->setTopEdge(++topEdge);
+
+        {
+            unique_lock<mutex> lk(m);
+            if (this->isSleeping)
+            {
+                cv.wait(lk);
+                this->isSleeping = false;
+            }
+        }
+
+        int sleepTime = this->getSpeed();
+        this_thread::sleep_for(chrono::milliseconds(sleepTime));
+    }
+}
+
+void Rectangle::notify()
+{
+    cv.notify_one();
+}
+
+void Rectangle::negateIsSleeping()
+{
+    bool currIsSleeping = this->isSleeping;
+    if (currIsSleeping)
+        this->notify();
+    else
+        this->isSleeping = true;
+}
+
+bool Rectangle::getIsSleeping()
+{
+    return this->isSleeping;
 }

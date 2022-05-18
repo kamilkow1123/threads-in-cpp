@@ -6,12 +6,15 @@ private:
     int width;
     int height;
     int speed;
+    bool isSleeping;
+    condition_variable cv;
 
 public:
-    Rectangle(int width, int height);
+    Rectangle(const Rectangle &);
+    Rectangle(int, int);
     void drawSpeed();
     int getTopEdge();
-    void setTopEdge(int position);
+    void setTopEdge(int);
     int getBottomEdge();
     bool getIsDirectionUp();
     void changeDirection();
@@ -19,4 +22,8 @@ public:
     int getWidth();
     int getHeight();
     void bounce();
+    void moveRectangle();
+    void notify();
+    void negateIsSleeping();
+    bool getIsSleeping();
 };

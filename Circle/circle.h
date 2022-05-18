@@ -14,18 +14,20 @@ private:
 
 public:
     Circle();
-    Circle(const char *symbol, int speed, int direction);
+    Circle(const char *, int, int);
     ~Circle();
     const char *getSymbol();
     int getX();
-    void setX(int coordinate);
+    void setX(int);
     int getY();
-    void setY(int coordinate);
+    void setY(int);
     int getSpeed();
     int getNumberOfBounces();
+    void setNumberOfBounces(int);
     void incrementNumberOfBounces();
     int getDeltaX();
     void bounceX();
     int getDeltaY();
     void bounceY();
+    bool touchedRectangle(int, int, int);
 };

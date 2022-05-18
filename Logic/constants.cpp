@@ -3,7 +3,7 @@ const int BOARD_WIDTH = 30;
 const int BOUNCE_LIMIT = 5;
 const int RECTANGLE_OFFSET = 50;
 char *symbols[10] = {(char *)"a", (char *)"b", (char *)"c", (char *)"d", (char *)"e", (char *)"f", (char *)"g", (char *)"h", (char *)"i", (char *)"j"};
-uniform_int_distribution<> sleepTime(100, 1000);
+uniform_int_distribution<> sleepTime(100, 800);
 uniform_int_distribution<> circleDirection(1, 3);
 uniform_int_distribution<> rectangleSpeed(100, 600);
 uniform_int_distribution<> symbolsIndex(0, 9);

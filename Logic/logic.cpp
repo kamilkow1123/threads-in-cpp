@@ -6,14 +6,17 @@
 #include <list>
 #include <vector>
 #include <random>
-#include "../Circle/circle.cpp"
-#include "../Rectangle/rectangle.cpp"
-#include "./constants.cpp"
+#include <mutex>
+#include <condition_variable>
 
-list<Circle> circleList;
 bool shouldEnd = false;
 
-void moveCircle(Circle *circle)
+#include "../Circle/circle.cpp"
+#include "../Rectangle/rectangle.cpp"
+
+list<Circle> circleList;
+
+void moveCircle(Circle *circle, Rectangle *rectangle)
 {
     int x, y;
     for (;;)
@@ -33,42 +36,30 @@ void moveCircle(Circle *circle)
         circle->setX(x + circle->getDeltaX());
         circle->setY(y + circle->getDeltaY());
 
+        if (circle->touchedRectangle(
+                rectangle->getTopEdge(),
+                rectangle->getWidth(),
+                rectangle->getHeight()))
+        {
+            circle->setNumberOfBounces(100);
+            rectangle->negateIsSleeping();
+        }
+
         int sleepTime = circle->getSpeed();
         this_thread::sleep_for(chrono::milliseconds(sleepTime));
     }
 }
 
-void moveRectangle(Rectangle *rectangle)
-{
-    int topEdge;
-
-    for (;;)
-    {
-        if (shouldEnd)
-            break;
-
-        if (rectangle->getTopEdge() == 1 || rectangle->getBottomEdge() == BOARD_WIDTH - 1)
-            rectangle->bounce();
-
-        topEdge = rectangle->getTopEdge();
-        if (rectangle->getIsDirectionUp())
-            rectangle->setTopEdge(--topEdge);
-        else
-            rectangle->setTopEdge(++topEdge);
-
-        int sleepTime = rectangle->getSpeed();
-        this_thread::sleep_for(chrono::milliseconds(sleepTime));
-    }
-}
-
-void printCircles(WINDOW *win)
+void printCircles(WINDOW *win, Rectangle *rectangle)
 {
     for (Circle circle : circleList)
     {
         if (circle.getNumberOfBounces() > BOUNCE_LIMIT)
             continue;
 
+        wattron(win, COLOR_PAIR(1));
         mvwprintw(win, circle.getX(), circle.getY(), circle.getSymbol());
+        wattroff(win, COLOR_PAIR(1));
     }
 }
 
@@ -77,13 +68,24 @@ void printRectangle(WINDOW *win, Rectangle *rectangle)
     wattron(win, A_STANDOUT);
     for (int i = 0; i < rectangle->getWidth(); i++)
         for (int j = 0; j < rectangle->getHeight(); j++)
-            mvwprintw(win, rectangle->getTopEdge() + i, j + RECTANGLE_OFFSET, " ");
+        {
+            if (rectangle->getIsSleeping())
+            {
+                wattron(win, COLOR_PAIR(2));
+                mvwprintw(win, rectangle->getTopEdge() + i, j + RECTANGLE_OFFSET, " ");
+                wattroff(win, COLOR_PAIR(2));
+            }
+            else
+                mvwprintw(win, rectangle->getTopEdge() + i, j + RECTANGLE_OFFSET, " ");
+        }
 
     wattroff(win, A_STANDOUT);
 }
 
 void printBoard(WINDOW *win, Rectangle *rectangle)
 {
+    init_pair(1, COLOR_BLACK, COLOR_BLUE);
+    init_pair(2, COLOR_BLACK, COLOR_RED);
     for (;;)
     {
         if (shouldEnd)
@@ -92,7 +94,7 @@ void printBoard(WINDOW *win, Rectangle *rectangle)
         werase(win);
 
         box(win, 0, 0);
-        printCircles(win);
+        printCircles(win, rectangle);
         printRectangle(win, rectangle);
 
         wrefresh(win);
@@ -127,14 +129,14 @@ void run()
 
     thread endProgramThread(endProgram, win);
     thread printBoardThread(printBoard, win, &rectangle);
-    thread moveRectangleThread(moveRectangle, &rectangle);
+    thread moveRectangleThread(&Rectangle::moveRectangle, &rectangle);
     list<thread> threadList;
 
     while (!shouldEnd)
     {
         Circle newCircle = Circle(symbols[symbolsIndex(gen)], sleepTime(gen), circleDirection(gen));
         circleList.push_back(newCircle);
-        threadList.push_back(thread(moveCircle, &(circleList.back())));
+        threadList.push_back(thread(moveCircle, &(circleList.back()), &rectangle));
         this_thread::sleep_for(chrono::milliseconds(drawBreakTime(gen)));
     }
 
@@ -150,3 +152,5 @@ void run()
 
     endwin();
 }
+
+//pilka stuka w prostokat i znika, prostokat sie usypia czyli zatrzymuje, jak kolejna pilka stuknie w prostokat to go obudzi

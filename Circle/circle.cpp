@@ -1,4 +1,5 @@
 #include "circle.h"
+#include "../Logic/constants.cpp"
 
 Circle::Circle(const char *symbol, int speed, int direction)
 {
@@ -38,6 +39,11 @@ int Circle::getSpeed() { return this->speed; }
 
 int Circle::getNumberOfBounces() { return this->numberOfBounces; }
 
+void Circle::setNumberOfBounces(int num)
+{
+    this->numberOfBounces = num;
+}
+
 void Circle::incrementNumberOfBounces() { this->numberOfBounces++; }
 
 int Circle::getDeltaX() { return this->deltaX; }
@@ -54,4 +60,13 @@ void Circle::bounceY()
 {
     this->deltaY *= -1;
     this->incrementNumberOfBounces();
+}
+
+bool Circle::touchedRectangle(int topLeftCorner, int width, int height)
+{
+    return (
+        y >= RECTANGLE_OFFSET &&
+        y <= RECTANGLE_OFFSET + width &&
+        x >= topLeftCorner &&
+        x <= topLeftCorner + height);
 }
