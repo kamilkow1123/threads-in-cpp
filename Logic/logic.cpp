@@ -142,6 +142,7 @@ void run()
 
     endProgramThread.join();
     printBoardThread.join();
+    rectangle.notify();
     moveRectangleThread.join();
 
     while (!threadList.empty())
