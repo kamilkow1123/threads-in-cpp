@@ -2,6 +2,7 @@
 #include "rectangle.h"
 
 using namespace std;
+mutex mu;
 
 Rectangle::Rectangle(const Rectangle &rec)
 {
@@ -52,7 +53,7 @@ void Rectangle::drawSpeed()
 {
     random_device rd;
     mt19937 gen(rd());
-    uniform_int_distribution<> RectangleSpeed(100, 1000);
+    uniform_int_distribution<> RectangleSpeed(200, 1000);
     this->speed = RectangleSpeed(gen);
 }
 
@@ -89,11 +90,9 @@ void Rectangle::moveRectangle()
 
         {
             unique_lock<mutex> lk(m);
-            if (this->isSleeping)
+            while (this->isSleeping)
             {
                 cv.wait(lk);
-                this->isSleeping = false;
-                continue;
             }
         }
 
@@ -118,11 +117,17 @@ void Rectangle::notify()
 
 void Rectangle::negateIsSleeping()
 {
+    mu.lock();
     bool currIsSleeping = this->isSleeping;
     if (currIsSleeping)
+    {
+        this->isSleeping = false;
         this->notify();
+    }
     else
         this->isSleeping = true;
+
+    mu.unlock();
 }
 
 bool Rectangle::getIsSleeping()

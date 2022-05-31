@@ -3,23 +3,23 @@
 
 Circle::Circle(const char *symbol, int speed, int direction)
 {
-    this->x = 28;
-    this->y = 35;
+    this->x = 15;
+    this->y = 2;
     this->symbol = symbol;
     this->speed = speed;
-    this->deltaX = 1;
+    this->deltaY = 1;
     this->numberOfBounces = 0;
     if (direction == 1)
     {
-        this->deltaY = 1;
+        this->deltaX = 1;
     }
     else if (direction == 2)
     {
-        this->deltaY = -1;
+        this->deltaX = -1;
     }
     else
     {
-        this->deltaY = 0;
+        this->deltaX = 0;
     }
 }
 
